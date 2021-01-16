@@ -1,7 +1,9 @@
 import pygame
 from constants import (
     BULLET_WIDTH,
-    BULLET_HEIGHT
+    BULLET_HEIGHT,
+    G,
+    HEIGHT
 )
 
 # 弾
@@ -17,4 +19,10 @@ class Bullet(pygame.sprite.Sprite):
         self.screen.blit(self.image, self.rect)
 
     def update(self):
+        self.vy += G * 0.1
+        self.x += self.vx
+        self.y += self.vy
         self.rect.move_ip(self.vx, self.vy)
+
+        if self.y > HEIGHT + 10:
+            self.kill()

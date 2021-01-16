@@ -45,6 +45,8 @@ MESSAGE_GAP = 20
 
 WHITE = (255, 255, 255)
 D = 10
+
+# プレイヤーと敵の最大HP,MP
 PLAYER_MAX_HP = 200
 ENEMY_MAX_HP = 200
 PLAYER_MAX_MP = 3
@@ -53,3 +55,7 @@ ENEMY_MAX_MP = 3
 G = 1 # 重力
 
 FONT_SIZE = 24
+
+# プレイヤーの攻撃により敵が受けるダメージ
+
+ATTACK_A = 1
