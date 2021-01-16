@@ -4,11 +4,16 @@ import pygame
 from player import Player
 from target import Target
 from bullet import Bullet
+from utils import show_health_bar, show_magic_point
 from constants import (
     FONT_SIZE,
     STAGE_START,
-    MY_HP,
-    ENEMY_HP,
+    PLAYER_MAX_HP,
+    ENEMY_MAX_HP,
+    PLAYER_MAX_MP,
+    ENEMY_MAX_MP,
+    PLAYER_MAX_MP,
+    ENEMY_MAX_MP,
     PLAYER_X,
     PLAYER_Y,
     PLAYER_VX,
@@ -48,19 +53,31 @@ class Box():
 
     def set(self):   # 初期設定を一括して行う
         self.stage = STAGE_START
-        screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.screen = screen
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()   # 時計オブジェクト
-        self.player = Player(screen, PLAYER_X, PLAYER_Y, PLAYER_VX, PLAYER_VY, STATE_STANDING)
-        self.target = Target(screen, TARGET_X, TARGET_Y, TARGET_VX, TARGET_VY )
+        self.player = Player(self.screen, PLAYER_X, PLAYER_Y, PLAYER_VX, PLAYER_VY, STATE_STANDING)
+        self.target = Target(self.screen, TARGET_X, TARGET_Y, TARGET_VX, TARGET_VY )
         self.show_score()
 
 
     def show_score(self):
+        """
         text = self.font.render( ("ENEMY'S HP : %d" % self.target.hp), True, WHITE)
         self.screen.blit(text, [20, 20])
         text = self.font.render( ("MY HP : %d" % self.player.hp), True, WHITE)
         self.screen.blit(text, [BOX_WIDTH-120, 20])
+        """
+
+        h_scale = 2
+        self.screen.blit(self.font.render("HP", True, WHITE), [BOX_WIDTH-40, 20])
+        show_health_bar(self.screen, self.player.hp / h_scale, PLAYER_MAX_HP / h_scale, (BOX_WIDTH-150, 20))
+        self.screen.blit(self.font.render("MP", True, WHITE), [BOX_WIDTH-40, 40])
+        show_magic_point(self.screen, self.player.mp, PLAYER_MAX_MP, (BOX_WIDTH - 130, 50))
+
+        self.screen.blit(self.font.render("HP", True, WHITE), [20, 20])
+        show_health_bar(self.screen, self.target.hp / h_scale, ENEMY_MAX_HP / h_scale, (50, 20))
+        self.screen.blit(self.font.render("MP", True, WHITE), [20, 40])
+        show_magic_point(self.screen, self.target.mp, ENEMY_MAX_MP, (70, 50))
 
     def run(self):
         while (self.stage != STAGE_QUIT):
