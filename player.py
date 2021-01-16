@@ -10,7 +10,8 @@ from constants import (
     BOX_HEIGHT,
     PLAYER_Y,
     PLAYER_VX,
-    PLAYER_VY
+    PLAYER_VY,
+    MY_HP
 )
 
 # 自機
@@ -23,6 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.y = y
         self.vx = vx
         self.vy = vy
+        self.hp = MY_HP
         self.image = pygame.image.load("img/cat_head.png")    # 画像を読み込む
         self.rect = pygame.Rect(self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.screen.blit(self.image, self.rect)

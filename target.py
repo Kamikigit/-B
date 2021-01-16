@@ -2,6 +2,7 @@ import pygame
 from constants import (
     TARGET_WIDTH,
     TARGET_HEIGHT,
+    ENEMY_HP
 )
 
 # 敵を作成
@@ -12,6 +13,7 @@ class Target(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.vx, self.vy = (vx, vy)
+        self.hp = ENEMY_HP
         self.image = pygame.image.load("img/car.png")    # 画像を読み込む
         self.rect = pygame.Rect(self.x, self.y, TARGET_WIDTH, TARGET_HEIGHT)
         self.screen.blit(self.image, self.rect)

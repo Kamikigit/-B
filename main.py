@@ -14,5 +14,5 @@ from box import Box
 box = Box(BOX_WIDTH, BOX_HEIGHT)
 box.set()       # ゲームの初期設定
 box.run()       # ステージの切り替え
-box.animate()   # アニメーション
-pygame.quit()   # 画面を閉じる
+# box.animate()   # アニメーション
+# pygame.quit()   # 画面を閉じる

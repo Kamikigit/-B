@@ -50,8 +50,6 @@ class Box():
         self.stage = STAGE_START
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.screen = screen
-        self.myHP = MY_HP
-        self.enemyHP = ENEMY_HP
         self.clock = pygame.time.Clock()   # 時計オブジェクト
         self.player = Player(screen, PLAYER_X, PLAYER_Y, PLAYER_VX, PLAYER_VY, STATE_STANDING)
         self.target = Target(screen, TARGET_X, TARGET_Y, TARGET_VX, TARGET_VY )
@@ -59,9 +57,9 @@ class Box():
 
 
     def show_score(self):
-        text = self.font.render( ("ENEMY'S HP : %d" % self.enemyHP), True, WHITE)
+        text = self.font.render( ("ENEMY'S HP : %d" % self.target.hp), True, WHITE)
         self.screen.blit(text, [20, 20])
-        text = self.font.render( ("MY HP : %d" % self.myHP), True, WHITE)
+        text = self.font.render( ("MY HP : %d" % self.player.hp), True, WHITE)
         self.screen.blit(text, [BOX_WIDTH-120, 20])
 
     def run(self):
@@ -69,12 +67,12 @@ class Box():
             if self.stage == STAGE_START:
                 self.intro()
             self.animate()
-            self.myHP = 100
-            # if self.stage == STAGE_DOWN and self.myHP > 0 and self.enemyHP <= 0:
+            self.player.hp = 100
+            # if self.stage == STAGE_DOWN and self.player.hp > 0 and self.target.hp <= 0:
             #     self.stage = STAGE_NEXT
             #     self.next()
             # if self.stage != STAGE_QUIT:
-            #     if self.myHP <= 0:
+            #     if self.player.hp <= 0:
             #         self.stage = STAGE_OVER
             #         self.game_over()
             #     else:       # 再開する
@@ -112,7 +110,11 @@ class Box():
         while (self.stage == STAGE_RUN):  # メインループ
             for event in pygame.event.get():
                 # 「閉じる」ボタンを処理する
-                if event.type == pygame.QUIT: LOOP = False
+                if event.type == pygame.QUIT:
+                    print("finish animation")
+                    pygame.quit()
+                    return
+                
                 if event.type == pygame.KEYDOWN: # aキーで攻撃
                     if event.key == pygame.K_a:
                         self.bullets.add(Bullet(self.screen, self.player.x, self.player.y, -3, 0))         
@@ -135,10 +137,10 @@ class Box():
 
             # 衝突判定
             collided = pygame.sprite.spritecollideany(self.target, self.bullets)
-            if self.enemyHP > 0:
+            if self.player.hp > 0:
                 if collided != None:
                     self.time = 40
-                    self.enemyHP -= 3
+                    self.target.hp -= 3
                     self.bullets.remove(collided)
 
                 if self.time > 0:
