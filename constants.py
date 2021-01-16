@@ -53,6 +53,7 @@ PLAYER_MAX_MP = 3
 ENEMY_MAX_MP = 3
 
 G = 1 # 重力
+AX = 1 # 横方向に減速する時の加速度
 
 FONT_SIZE = 24
 

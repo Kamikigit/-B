@@ -57,7 +57,7 @@ class Box():
         self.stage = STAGE_START
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()   # 時計オブジェクト
-        self.player = Player(self.screen, PLAYER_X, PLAYER_Y, PLAYER_VX, PLAYER_VY, STATE_STANDING)
+        self.player = Player(self.screen, PLAYER_X, PLAYER_Y, 0, 0, STATE_STANDING)
         self.target = Target(self.screen, TARGET_X, TARGET_Y, TARGET_VX, TARGET_VY )
         self.show_score()
 
@@ -79,17 +79,8 @@ class Box():
         while (self.stage != STAGE_QUIT):
             if self.stage == STAGE_START:
                 self.intro()
-            self.animate()
-            self.player.hp = 100
-            # if self.stage == STAGE_DOWN and self.player.hp > 0 and self.target.hp <= 0:
-            #     self.stage = STAGE_NEXT
-            #     self.next()
-            # if self.stage != STAGE_QUIT:
-            #     if self.player.hp <= 0:
-            #         self.stage = STAGE_OVER
-            #         self.game_over()
-            #     else:       # 再開する
-            #         self.stage = STAGE_RUN
+            elif self.stage == STAGE_RUN:
+                self.animate()
 
 
     def intro_message(self):
@@ -121,6 +112,7 @@ class Box():
 
     def animate(self):
         while (self.stage == STAGE_RUN):  # メインループ
+            enemy_direction = 1 if (self.player.x < self.target.x) else -1
             for event in pygame.event.get():
                 # 「閉じる」ボタンを処理する
                 if event.type == pygame.QUIT:
@@ -130,8 +122,9 @@ class Box():
                 
                 if event.type == pygame.KEYDOWN: # aキーで攻撃
                     if event.key == pygame.K_a:
-                        enemy_direction = 1 if (self.player.x < self.target.x) else -1
                         self.bullets.add(Bullet(self.screen, self.player.x + PLAYER_WIDTH / 2, self.player.y + PLAYER_HEIGHT / 2 - 30, 5 * enemy_direction, -2))         
+                    if event.key == pygame.K_s:
+                        self.player.punch(-1)
 
             self.clock.tick(FPS)      # 毎秒の呼び出し回数に合わせて遅延
 

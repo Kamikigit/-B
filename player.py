@@ -12,7 +12,8 @@ from constants import (
     PLAYER_VX,
     PLAYER_VY,
     PLAYER_MAX_HP,
-    PLAYER_MAX_MP
+    PLAYER_MAX_MP,
+    AX
 )
 
 # 自機
@@ -28,6 +29,8 @@ class Player(pygame.sprite.Sprite):
         self.hp = PLAYER_MAX_HP
         self.mp = PLAYER_MAX_MP
         self.image = pygame.image.load("img/cat_head.png")    # 画像を読み込む
+        self.punch_effect = pygame.image.load("img/cat_punch_effect.png")
+
         self.rect = pygame.Rect(self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.screen.blit(self.image, self.rect)
 
@@ -48,14 +51,20 @@ class Player(pygame.sprite.Sprite):
             # 地面判定
             if self.y >= BOX_HEIGHT - PLAYER_HEIGHT: # ==はだめ
                 self.y = PLAYER_Y       # 埋まるのを防ぐ
+                self.vy = 0
                 self.status = STATE_STANDING
             # 天井判定
             if self.y <= 0:
                 self.y = 0
             
         else:
-            self.vx = PLAYER_VX
-            self.vy = PLAYER_VY
+            if self.vx > 0:
+                self.vx -= AX
+            elif self.vx < 0:
+                self.vx += AX
+
+            self.x += self.vx
+            self.y += self.vy
             self.rect.move_ip(self.vx, self.vy)
 
     def jump(self, vx, vy):
@@ -65,11 +74,13 @@ class Player(pygame.sprite.Sprite):
         # self.rect.move_ip(self.vx, self.vy)
     
     def right(self):
-        x = self.x + self.vx
-        if x + PLAYER_WIDTH < BOX_WIDTH:
-            self.x = x
+        self.vx = PLAYER_VX
 
     def left(self):
-        x = self.x - self.vx
-        if x > 0:
-            self.x = x
+        self.vx = -PLAYER_VX
+
+    def punch(self, dir):
+        print("pos:", self.x + PLAYER_WIDTH / 2 + 20 * dir, self.y + PLAYER_HEIGHT / 2 - 20)
+        rect = self.punch_effect.get_rect()
+        rect.center = (self.x + PLAYER_WIDTH / 2 + 50 * dir, self.y + PLAYER_HEIGHT / 2 - 20)
+        self.screen.blit(self.punch_effect, rect)
