@@ -20,10 +20,10 @@ STATE_STANDING = 0
 
 TARGET_VX = 0           # 敵機の速度
 TARGET_VY = 0
-TARGET_WIDTH = 260      # 敵機の画像サイズ
-TARGET_HEIGHT = 260
+TARGET_WIDTH = 200      # 敵機の画像サイズ
+TARGET_HEIGHT = 180
 TARGET_X = 0            #敵機の出現位置
-TARGET_Y = 50
+TARGET_Y = BOX_HEIGHT - TARGET_HEIGHT
 
 BULLET_WIDTH = 50        # 弾の画像サイズ
 BULLET_HEIGHT = 46

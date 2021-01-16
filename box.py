@@ -154,7 +154,7 @@ class Box():
 
             # 衝突判定
             collided = pygame.sprite.spritecollideany(self.target, self.bullets)
-            if self.player.hp > 0:
+            if self.target.hp > 0:
                 if collided != None:
                     self.time = 40
                     self.target.hp -= 3
