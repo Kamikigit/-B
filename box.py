@@ -16,6 +16,8 @@ from constants import (
     ENEMY_MAX_MP,
     PLAYER_X,
     PLAYER_Y,
+    PLAYER_WIDTH,
+    PLAYER_HEIGHT,
     PLAYER_VX,
     PLAYER_VY,
     TARGET_X,
@@ -129,7 +131,7 @@ class Box():
                 if event.type == pygame.KEYDOWN: # aキーで攻撃
                     if event.key == pygame.K_a:
                         enemy_direction = 1 if (self.player.x < self.target.x) else -1
-                        self.bullets.add(Bullet(self.screen, self.player.x, self.player.y, 5 * enemy_direction, -2))         
+                        self.bullets.add(Bullet(self.screen, self.player.x + PLAYER_WIDTH / 2, self.player.y + PLAYER_HEIGHT / 2 - 30, 5 * enemy_direction, -2))         
 
             self.clock.tick(FPS)      # 毎秒の呼び出し回数に合わせて遅延
 
@@ -149,7 +151,7 @@ class Box():
 
             # 衝突判定
             collided = pygame.sprite.spritecollideany(self.target, self.bullets)
-            if self.player.hp > 0:
+            if self.target.hp > 0:
                 if collided != None:
                     self.time = 40
                     self.target.hp -= ATTACK_A
