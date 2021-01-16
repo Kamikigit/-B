@@ -31,7 +31,7 @@ from constants import (
     STAGE_QUIT,
     STAGE_RUN,
     FPS,
-
+    ATTACK_A
 )
 
 # Box(ゲーム領域)の定義
@@ -61,12 +61,6 @@ class Box():
 
 
     def show_score(self):
-        """
-        text = self.font.render( ("ENEMY'S HP : %d" % self.target.hp), True, WHITE)
-        self.screen.blit(text, [20, 20])
-        text = self.font.render( ("MY HP : %d" % self.player.hp), True, WHITE)
-        self.screen.blit(text, [BOX_WIDTH-120, 20])
-        """
 
         h_scale = 2
         self.screen.blit(self.font.render("HP", True, WHITE), [BOX_WIDTH-40, 20])
@@ -134,7 +128,8 @@ class Box():
                 
                 if event.type == pygame.KEYDOWN: # aキーで攻撃
                     if event.key == pygame.K_a:
-                        self.bullets.add(Bullet(self.screen, self.player.x, self.player.y, -3, 0))         
+                        enemy_direction = 1 if (self.player.x < self.target.x) else -1
+                        self.bullets.add(Bullet(self.screen, self.player.x, self.player.y, 5 * enemy_direction, -2))         
 
             self.clock.tick(FPS)      # 毎秒の呼び出し回数に合わせて遅延
 
@@ -157,7 +152,7 @@ class Box():
             if self.player.hp > 0:
                 if collided != None:
                     self.time = 40
-                    self.target.hp -= 3
+                    self.target.hp -= ATTACK_A
                     self.bullets.remove(collided)
 
                 if self.time > 0:
