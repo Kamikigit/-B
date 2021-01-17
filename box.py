@@ -36,7 +36,6 @@ from constants import (
     STAGE_QUIT,
     STAGE_RUN,
     FPS,
-    ATTACK_A
 )
 
 # Box(ゲーム領域)の定義
@@ -45,7 +44,6 @@ class Box():
         pygame.init()
         self.width = w
         self.height = h
-        self.bullets = pygame.sprite.Group()
         self.target = None
         self.font = pygame.font.SysFont('comicsansms', FONT_SIZE)
         self.font_intro = pygame.font.SysFont('comicsansms', 40)
@@ -53,15 +51,14 @@ class Box():
         self.rect_bg = self.bg.get_rect()
         self.title = pygame.image.load("img/title.png")
         self.rect_title = self.bg.get_rect()
-        self.time = 0
         self.deg = 0
 
     def set(self):   # 初期設定を一括して行う
         self.stage = STAGE_START
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()   # 時計オブジェクト
-        self.player = Player(self.screen, PLAYER_X, PLAYER_Y, PLAYER_VX, PLAYER_VY, STATE_STANDING)
-        self.target = Target(self.screen, TARGET_X, TARGET_Y, TARGET_VX, TARGET_VY, STATE_STANDING)
+        self.player = Player(self.screen, PLAYER_X, PLAYER_Y, 0, 0, STATE_STANDING)
+        self.target = Target(self.screen, TARGET_X, TARGET_Y, 0, 0, STATE_STANDING)
         self.show_score()
 
 
@@ -82,17 +79,8 @@ class Box():
         while (self.stage != STAGE_QUIT):
             if self.stage == STAGE_START:
                 self.intro()
-            self.animate()
-            self.player.hp = 100
-            # if self.stage == STAGE_DOWN and self.player.hp > 0 and self.target.hp <= 0:
-            #     self.stage = STAGE_NEXT
-            #     self.next()
-            # if self.stage != STAGE_QUIT:
-            #     if self.player.hp <= 0:
-            #         self.stage = STAGE_OVER
-            #         self.game_over()
-            #     else:       # 再開する
-            #         self.stage = STAGE_RUN
+            elif self.stage == STAGE_RUN:
+                self.animate()
 
 
     def intro_message(self):
@@ -124,6 +112,7 @@ class Box():
 
     def animate(self):
         while (self.stage == STAGE_RUN):  # メインループ
+            enemy_direction = 1 if self.player.x < self.target.x else -1
             for event in pygame.event.get():
                 # 「閉じる」ボタンを処理する
                 if event.type == pygame.QUIT:
@@ -133,8 +122,9 @@ class Box():
                 
                 if event.type == pygame.KEYDOWN: # aキーで攻撃
                     if event.key == pygame.K_a:
-                        enemy_direction = 1 if (self.player.x < self.target.x) else -1
-                        self.bullets.add(Bullet(self.screen, self.player.x + PLAYER_WIDTH / 2, self.player.y + PLAYER_HEIGHT / 2 - 30, 5 * enemy_direction, -2))         
+                        self.player.shot(enemy_direction)
+                    if event.key == pygame.K_s:
+                        self.player.punch(enemy_direction)
 
             self.clock.tick(FPS)      # 毎秒の呼び出し回数に合わせて遅延
 
@@ -146,50 +136,35 @@ class Box():
             if pressed_keys[pygame.K_LEFT]:
                 self.player.left()
 
-            # オブジェクトのアップデート
-            self.bullets.update()
-            self.player.update()
-            self.target.update()
-
-
-
-            # 肉球の衝突判定
-            collided = pygame.sprite.spritecollideany(self.target, self.bullets)
             if self.target.hp > 0:
+                # 肉球の衝突判定
+                collided = pygame.sprite.spritecollideany(self.target, self.player.bullets)
                 if collided != None:
-                    self.time = 40
-                    self.target.hp -= ATTACK_A
-                    self.bullets.remove(collided)
-
-                if self.time > 0:
-                    self.target.attacked_pic()
-                    self.time -= 1
-                # 車の攻撃。距離が200以下だと突進
-                elif abs(self.player.x - (self.target.x + TARGET_WIDTH)/2) < 200 \
-                    and (self.target.status == STATE_STANDING or self.target.status == STATE_ATTACKING):
-                    self.target.attack(self.player.x - self.target.x)
-                    # 車攻撃の衝突判定
-                    collided = pygame.sprite.collide_rect(self.target, self.player)
-                    if collided:
-                        self.player.hp -= 15
-                        self.target.attack_success()
-                        print("success")
-
-                else:
-                    self.target.default_pic()
-
-                print(self.target.status)
-                
+                    self.target.get_attacked('SHOT')
+                    self.player.bullets.remove(collided)
+                # 近接猫パンチとターゲットの衝突判定
+                if self.player.nikukyu != None and pygame.sprite.collide_rect(self.target, self.player.nikukyu):
+                    self.target.get_attacked('PUNCH')
 
 
             else:
-                self.target.lose_pic()
-            # print(self.player.y, BOX_HEIGHT - PLAYER_HEIGHT)
+                # プレイヤーが勝った
+                self.player.win()
+                self.target.lose()
+
+            # オブジェクトのアップデート
+            self.player.set_enemy(self.target)
+            self.target.set_player(self.player)
+
+            # お互いの情報を伝え合う
+            self.player.update()
+            self.target.update()
+            
             # 表示の更新
             self.show_score()
-            self.bullets.draw(self.screen)
             self.target.draw()
             self.player.draw()
+            self.player.bullets.draw(self.screen)
             pygame.display.flip() # パドルとボールの描画を画面に反映
             self.screen.blit(self.bg, self.rect_bg)     # 背景画像
             # self.screen.fill((0, 0, 0))  # 塗潰し：次の flip まで反映されない
