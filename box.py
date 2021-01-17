@@ -24,10 +24,13 @@ from constants import (
     TARGET_Y,
     TARGET_VX,
     TARGET_VY,
+    TARGET_WIDTH,
     WIDTH,
     HEIGHT,
     WHITE,
     STATE_STANDING,
+    STATE_ATTACKING,
+    STATE_HIT,
     BOX_WIDTH,
     STAGE_INTRO,
     STAGE_QUIT,
@@ -58,7 +61,7 @@ class Box():
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()   # 時計オブジェクト
         self.player = Player(self.screen, PLAYER_X, PLAYER_Y, PLAYER_VX, PLAYER_VY, STATE_STANDING)
-        self.target = Target(self.screen, TARGET_X, TARGET_Y, TARGET_VX, TARGET_VY )
+        self.target = Target(self.screen, TARGET_X, TARGET_Y, TARGET_VX, TARGET_VY, STATE_STANDING)
         self.show_score()
 
 
@@ -142,14 +145,15 @@ class Box():
                 self.player.right()
             if pressed_keys[pygame.K_LEFT]:
                 self.player.left()
-            # if pressed_keys[pygame.K_a]:    # aで攻撃
-            #     self.bullets.add(Bullet(self.screen, self.player.x, self.player.y, -3, 0))         
 
             # オブジェクトのアップデート
             self.bullets.update()
             self.player.update()
+            self.target.update()
 
-            # 衝突判定
+
+
+            # 肉球の衝突判定
             collided = pygame.sprite.spritecollideany(self.target, self.bullets)
             if self.target.hp > 0:
                 if collided != None:
@@ -160,9 +164,24 @@ class Box():
                 if self.time > 0:
                     self.target.attacked_pic()
                     self.time -= 1
+                # 車の攻撃。距離が200以下だと突進
+                elif abs(self.player.x - (self.target.x + TARGET_WIDTH)/2) < 200 \
+                    and (self.target.status == STATE_STANDING or self.target.status == STATE_ATTACKING):
+                    self.target.attack(self.player.x - self.target.x)
+                    # 車攻撃の衝突判定
+                    collided = pygame.sprite.collide_rect(self.target, self.player)
+                    if collided:
+                        self.player.hp -= 15
+                        self.target.attack_success()
+                        print("success")
+
                 else:
                     self.target.default_pic()
-        
+
+                print(self.target.status)
+                
+
+
             else:
                 self.target.lose_pic()
             # print(self.player.y, BOX_HEIGHT - PLAYER_HEIGHT)
