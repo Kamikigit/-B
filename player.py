@@ -29,7 +29,9 @@ class Player(pygame.sprite.Sprite):
         self.hp = PLAYER_MAX_HP
         self.mp = PLAYER_MAX_MP
         self.image = pygame.image.load("img/cat_head.png")    # 画像を読み込む
+
         self.punch_effect = pygame.image.load("img/cat_punch_effect.png")
+        self.punchMotionFrame = 0
 
         self.rect = pygame.Rect(self.x, self.y, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.screen.blit(self.image, self.rect)
@@ -56,7 +58,7 @@ class Player(pygame.sprite.Sprite):
             # 天井判定
             if self.y <= 0:
                 self.y = 0
-            
+        elif :
         else:
             if self.vx > 0:
                 self.vx -= AX
@@ -66,6 +68,7 @@ class Player(pygame.sprite.Sprite):
             self.x += self.vx
             self.y += self.vy
             self.rect.move_ip(self.vx, self.vy)
+
 
     def jump(self, vx, vy):
         self.status = STATE_JUMPING
@@ -84,3 +87,5 @@ class Player(pygame.sprite.Sprite):
         rect = self.punch_effect.get_rect()
         rect.center = (self.x + PLAYER_WIDTH / 2 + 50 * dir, self.y + PLAYER_HEIGHT / 2 - 20)
         self.screen.blit(self.punch_effect, rect)
+
+    def showPunchMotion(self):
