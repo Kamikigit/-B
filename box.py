@@ -151,7 +151,7 @@ class Box():
 
             pressed_keys = pygame.key.get_pressed() # キー情報を取得
             if pressed_keys[pygame.K_UP]:    # 上でジャンプ
-                self.player.jump(0, -10)
+                self.player.jump(0, -15)
             if pressed_keys[pygame.K_RIGHT]:
                 self.player.right()
             if pressed_keys[pygame.K_LEFT]:

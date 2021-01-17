@@ -48,6 +48,9 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.image.load("img/cat_head.png")    # 画像を読み込む
         self.body_blow_effect = pygame.image.load("img/cat_punch_effect.png")
 
+        self.jump_count = 0
+        self.jump_max = 2
+        self.prohibit_jump_frame = 0
 
         # 肉球ショット
         self.bullets = pygame.sprite.Group()
@@ -87,6 +90,7 @@ class Player(pygame.sprite.Sprite):
         assert self.enemy != None
 
         if self.status == STATE_JUMPING:
+            self.prohibit_jump_frame = max(self.prohibit_jump_frame - 1, 0)
             self.vy += G    
             self.vy = max(self.vy, MAX_VY)
             self.x += self.vx
@@ -96,6 +100,8 @@ class Player(pygame.sprite.Sprite):
             if self.y >= BOX_HEIGHT - PLAYER_HEIGHT: # ==はだめ
                 self.y = PLAYER_Y       # 埋まるのを防ぐ
                 self.vy = 0
+                self.jump_count = 0
+                self.prohibit_jump_frame = 0
                 self.status = STATE_STANDING
             # 天井判定
             if self.y <= 0:
@@ -179,6 +185,10 @@ class Player(pygame.sprite.Sprite):
         self.effects.update()
 
     def jump(self, vx, vy):
+        if self.jump_count >= self.jump_max or self.prohibit_jump_frame > 0:
+            return
+        self.jump_count += 1
+        self.prohibit_jump_frame = 15
         self.status = STATE_JUMPING
         self.vx = vx
         self.vy = vy
