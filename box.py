@@ -35,6 +35,8 @@ from constants import (
     STAGE_INTRO,
     STAGE_QUIT,
     STAGE_RUN,
+    STAGE_CLEAR,
+    STAGE_OVER,
     FPS,
 )
 
@@ -78,9 +80,13 @@ class Box():
     def run(self):
         while (self.stage != STAGE_QUIT):
             if self.stage == STAGE_START:
-                self.intro()
+                self.show_intro_screen()
             elif self.stage == STAGE_RUN:
-                self.animate()
+                self.show_battle_screen()
+            elif self.stage == STAGE_CLEAR:
+                self.show_clear_screen()
+            elif self.stage == STAGE_OVER:
+                self.show_gameover_screen()
 
 
     def intro_message(self):
@@ -92,7 +98,7 @@ class Box():
         self.screen.blit(text, position)
         self.deg = (self.deg + 5) % 360
 
-    def intro(self):
+    def show_intro_screen(self):
         self.stage = STAGE_INTRO
         while (self.stage == STAGE_INTRO):
             for event in pygame.event.get():
@@ -110,7 +116,7 @@ class Box():
 
 
 
-    def animate(self):
+    def show_battle_screen(self):
         while (self.stage == STAGE_RUN):  # メインループ
             enemy_direction = 1 if self.player.x < self.target.x else -1
             for event in pygame.event.get():
@@ -136,29 +142,35 @@ class Box():
             if pressed_keys[pygame.K_LEFT]:
                 self.player.left()
 
-            if self.target.hp > 0:
-                # 肉球の衝突判定
-                collided = pygame.sprite.spritecollideany(self.target, self.player.bullets)
-                if collided != None:
-                    self.target.get_attacked('SHOT')
-                    self.player.bullets.remove(collided)
-                # 近接猫パンチとターゲットの衝突判定
-                if self.player.nikukyu != None and pygame.sprite.collide_rect(self.target, self.player.nikukyu):
-                    self.target.get_attacked('PUNCH')
+            # 肉球の衝突判定
+            collided = pygame.sprite.spritecollideany(self.target, self.player.bullets)
+            if collided != None:
+                self.target.get_attacked('SHOT')
+                self.player.bullets.remove(collided)
+            # 近接猫パンチとターゲットの衝突判定
+            if self.player.nikukyu != None and pygame.sprite.collide_rect(self.target, self.player.nikukyu):
+                self.target.get_attacked('PUNCH')
 
 
-            else:
-                # プレイヤーが勝った
-                self.player.win()
-                self.target.lose()
 
-            # オブジェクトのアップデート
+            # お互いの情報を伝え合う
             self.player.set_enemy(self.target)
             self.target.set_player(self.player)
 
-            # お互いの情報を伝え合う
+            # オブジェクトのアップデート
             self.player.update()
             self.target.update()
+
+            if self.target.hp <= 0:
+                # プレイヤーが勝った
+                self.player.win()
+                self.target.lose()
+                return
+            if self.player.hp <= 0:
+                # 敵が勝った
+                self.player.lose()
+                self.target.lose()
+                return
             
             # 表示の更新
             self.show_score()
@@ -168,3 +180,5 @@ class Box():
             pygame.display.flip() # パドルとボールの描画を画面に反映
             self.screen.blit(self.bg, self.rect_bg)     # 背景画像
             # self.screen.fill((0, 0, 0))  # 塗潰し：次の flip まで反映されない
+
+    def 

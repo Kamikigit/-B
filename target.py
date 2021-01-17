@@ -108,6 +108,9 @@ class Target(pygame.sprite.Sprite):
         if self.x + TARGET_WIDTH > BOX_WIDTH:
             self.x = BOX_WIDTH - TARGET_WIDTH
 
+        if self.hp <= 0:
+            self.hp = 0
+
         bb1 = {
             'x1': self.x,
             'y1': self.y,

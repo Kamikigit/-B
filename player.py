@@ -140,6 +140,9 @@ class Player(pygame.sprite.Sprite):
         if self.x + PLAYER_WIDTH > BOX_WIDTH:
             self.x = BOX_WIDTH - PLAYER_WIDTH
 
+        if self.hp <= 0:
+            self.hp = 0
+
         bb1 = {
             'x1': self.x,
             'y1': self.y,
