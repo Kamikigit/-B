@@ -34,6 +34,7 @@ from constants import (
     STATE_HIT,
     BOX_WIDTH,
     STAGE_INTRO,
+    STAGE_TUTORIAL,
     STAGE_QUIT,
     STAGE_RUN,
     STAGE_CLEAR,
@@ -53,7 +54,9 @@ class Box():
         self.bg = pygame.image.load("img/bg.jpg")    # 背景画像の取得
         self.rect_bg = self.bg.get_rect()
         self.title = pygame.image.load("img/title.png")
-        self.rect_title = self.bg.get_rect()
+        self.rect_title = self.title.get_rect()
+        self.tutorial = pygame.image.load("img/tutorial.png")
+        self.rect_tutorial = self.tutorial.get_rect()
         self.deg = 0
 
     def set(self):   # 初期設定を一括して行う
@@ -82,6 +85,8 @@ class Box():
         while (self.stage != STAGE_QUIT):
             if self.stage == STAGE_START:
                 self.show_intro_screen()
+            elif self.stage == STAGE_TUTORIAL:
+                self.show_tutorial_screen()
             elif self.stage == STAGE_RUN:
                 self.show_battle_screen()
             elif self.stage == STAGE_CLEAR:
@@ -106,7 +111,7 @@ class Box():
                 if event.type == pygame.QUIT: self.stage = STAGE_QUIT
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.stage = STAGE_RUN
+                        self.stage = STAGE_TUTORIAL
 
 
             self.clock.tick(FPS)      # 毎秒の呼び出し回数に合わせて遅延
@@ -115,7 +120,17 @@ class Box():
             self.screen.fill((0,0,0))
             self.screen.blit(self.title, self.rect_title)
 
-
+    def show_tutorial_screen(self):
+        while(self.stage == STAGE_TUTORIAL):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: self.stage = STAGE_QUIT
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        self.stage = STAGE_RUN
+                        self.clock.tick(FPS)      # 毎秒の呼び出し回数に合わせて遅延
+            pygame.display.flip()
+            self.screen.fill((0,0,0))
+            self.screen.blit(self.tutorial, self.rect_tutorial)   
 
     def show_battle_screen(self):
         while (self.stage == STAGE_RUN):  # メインループ
