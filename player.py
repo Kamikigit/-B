@@ -49,7 +49,7 @@ class Player(pygame.sprite.Sprite):
         self.body_blow_effect = pygame.image.load("img/cat_punch_effect.png")
 
         self.jump_count = 0
-        self.jump_max = 2
+        self.jump_max = 3
         self.prohibit_jump_frame = 0
 
         # 肉球ショット
