@@ -8,15 +8,18 @@ BOX_HEIGHT = 320       # ゲーム領域の高さ
 
 DURATION = 0.05        # 描画間隔
 
-PLAYER_WIDTH = 100      # 自機の画像サイズ
-PLAYER_HEIGHT = 100     
+PLAYER_WIDTH = 80      # 自機の画像サイズ
+PLAYER_HEIGHT = 80     
 PLAYER_X = BOX_WIDTH - PLAYER_WIDTH
 PLAYER_Y = BOX_HEIGHT - PLAYER_HEIGHT
 PLAYER_VX = 10          # 自機の速度
 PLAYER_VY = 10
 MAX_VY = -200
-STATE_JUMPING = 1       # 自機の状態
-STATE_STANDING = 0
+
+STATE_STANDING = 0      # 自機や適機の状態
+STATE_JUMPING = 1 
+STATE_ATTACKING = 2
+STATE_HIT = 3
 
 TARGET_VX = 0           # 敵機の速度
 TARGET_VY = 0
@@ -24,6 +27,7 @@ TARGET_WIDTH = 200      # 敵機の画像サイズ
 TARGET_HEIGHT = 180
 TARGET_X = 0            #敵機の出現位置
 TARGET_Y = BOX_HEIGHT - TARGET_HEIGHT
+
 
 BULLET_WIDTH = 50        # 弾の画像サイズ
 BULLET_HEIGHT = 46
