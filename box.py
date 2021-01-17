@@ -1,4 +1,5 @@
 import math
+from time import sleep
 
 import pygame
 from player import Player
@@ -118,6 +119,20 @@ class Box():
 
     def show_battle_screen(self):
         while (self.stage == STAGE_RUN):  # メインループ
+            if self.target.hp <= 0:
+                # プレイヤーが勝った
+                self.player.win()
+                self.target.lose()
+                self.stage = STAGE_CLEAR
+                sleep(1)
+                return
+            if self.player.hp <= 0:
+                # 敵が勝った
+                self.player.lose()
+                self.target.lose()
+                self.stage = STAGE_OVER
+                sleep(1)
+                return
             enemy_direction = 1 if self.player.x < self.target.x else -1
             for event in pygame.event.get():
                 # 「閉じる」ボタンを処理する
@@ -161,16 +176,6 @@ class Box():
             self.player.update()
             self.target.update()
 
-            if self.target.hp <= 0:
-                # プレイヤーが勝った
-                self.player.win()
-                self.target.lose()
-                return
-            if self.player.hp <= 0:
-                # 敵が勝った
-                self.player.lose()
-                self.target.lose()
-                return
             
             # 表示の更新
             self.show_score()
@@ -181,4 +186,22 @@ class Box():
             self.screen.blit(self.bg, self.rect_bg)     # 背景画像
             # self.screen.fill((0, 0, 0))  # 塗潰し：次の flip まで反映されない
 
-    def 
+    def show_clear_screen(self):
+        self.clock.tick(FPS)
+        pygame.display.flip()
+        self.screen.fill((0, 0, 0))
+        text = self.font_intro.render("CLEARED!!", True, (255, 255, 255))
+        position = text.get_rect()
+        position.center = (WIDTH / 2, HEIGHT / 2)
+        self.screen.blit(text, position)
+
+        
+
+    def show_gameover_screen(self):
+        self.clock.tick(FPS)
+        pygame.display.flip()
+        self.screen.fill((0, 0, 0))
+        text = self.font_intro.render("GAME OVER!!", True, (255, 255, 255))
+        position = text.get_rect()
+        position.center = (WIDTH / 2, HEIGHT / 2)
+        self.screen.blit(text, position)
