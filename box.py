@@ -36,7 +36,6 @@ from constants import (
     STAGE_QUIT,
     STAGE_RUN,
     FPS,
-    ATTACK_A
 )
 
 # Box(ゲーム領域)の定義
@@ -53,20 +52,14 @@ class Box():
         self.rect_bg = self.bg.get_rect()
         self.title = pygame.image.load("img/title.png")
         self.rect_title = self.bg.get_rect()
-        self.time = 0
         self.deg = 0
 
     def set(self):   # 初期設定を一括して行う
         self.stage = STAGE_START
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.clock = pygame.time.Clock()   # 時計オブジェクト
-<<<<<<< HEAD
         self.player = Player(self.screen, PLAYER_X, PLAYER_Y, 0, 0, STATE_STANDING)
-        self.target = Target(self.screen, TARGET_X, TARGET_Y, TARGET_VX, TARGET_VY )
-=======
-        self.player = Player(self.screen, PLAYER_X, PLAYER_Y, PLAYER_VX, PLAYER_VY, STATE_STANDING)
-        self.target = Target(self.screen, TARGET_X, TARGET_Y, TARGET_VX, TARGET_VY, STATE_STANDING)
->>>>>>> 30d734e7338fc22fd23b1e83baffe1d69dd75d35
+        self.target = Target(self.screen, TARGET_X, TARGET_Y, 0, 0, STATE_STANDING)
         self.show_score()
 
 
@@ -120,7 +113,7 @@ class Box():
 
     def animate(self):
         while (self.stage == STAGE_RUN):  # メインループ
-            enemy_direction = 1 if (self.player.x < self.target.x) else -1
+            enemy_direction = 1 if self.player.x < self.target.x else -1
             for event in pygame.event.get():
                 # 「閉じる」ボタンを処理する
                 if event.type == pygame.QUIT:
@@ -132,7 +125,7 @@ class Box():
                     if event.key == pygame.K_a:
                         self.bullets.add(Bullet(self.screen, self.player.x + PLAYER_WIDTH / 2, self.player.y + PLAYER_HEIGHT / 2 - 30, 5 * enemy_direction, -2))         
                     if event.key == pygame.K_s:
-                        self.player.punch(-1)
+                        self.player.punch(enemy_direction)
 
             self.clock.tick(FPS)      # 毎秒の呼び出し回数に合わせて遅延
 
@@ -144,27 +137,20 @@ class Box():
             if pressed_keys[pygame.K_LEFT]:
                 self.player.left()
 
-            # オブジェクトのアップデート
-            self.bullets.update()
-            self.player.update()
-            self.target.update()
-
-
-
-            # 肉球の衝突判定
-            collided = pygame.sprite.spritecollideany(self.target, self.bullets)
             if self.target.hp > 0:
+                # 肉球の衝突判定
+                collided = pygame.sprite.spritecollideany(self.target, self.bullets)
                 if collided != None:
-                    self.time = 40
-                    self.target.hp -= ATTACK_A
+                    self.target.get_attacked('SHOT')
                     self.bullets.remove(collided)
+                # 近接猫パンチとターゲットの衝突判定
+                if self.player.nikukyu != None and pygame.sprite.collide_rect(self.target, self.player.nikukyu):
+                    self.target.get_attacked('PUNCH')
 
-                if self.time > 0:
-                    self.target.attacked_pic()
-                    self.time -= 1
                 # 車の攻撃。距離が200以下だと突進
                 elif abs(self.player.x - (self.target.x + TARGET_WIDTH)/2) < 200 \
                     and (self.target.status == STATE_STANDING or self.target.status == STATE_ATTACKING):
+                    """
                     self.target.attack(self.player.x - self.target.x)
                     # 車攻撃の衝突判定
                     collided = pygame.sprite.collide_rect(self.target, self.player)
@@ -172,17 +158,25 @@ class Box():
                         self.player.hp -= 15
                         self.target.attack_success()
                         print("success")
+                    """
+                    pass
 
-                else:
-                    self.target.default_pic()
 
-                print(self.target.status)
+
+                # print(self.target.status)
                 
 
 
             else:
-                self.target.lose_pic()
+                self.player.win()
+                self.target.lose()
             # print(self.player.y, BOX_HEIGHT - PLAYER_HEIGHT)
+
+            # オブジェクトのアップデート
+            self.bullets.update()
+            self.player.update()
+            self.target.update()
+            
             # 表示の更新
             self.show_score()
             self.bullets.draw(self.screen)
