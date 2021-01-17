@@ -62,6 +62,7 @@ class Box():
     def set(self):   # 初期設定を一括して行う
         self.stage = STAGE_START
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Cat Fighter Z")
         self.clock = pygame.time.Clock()   # 時計オブジェクト
         self.player = Player(self.screen, PLAYER_X, PLAYER_Y, 0, 0, STATE_STANDING)
         self.target = Target(self.screen, TARGET_X, TARGET_Y, 0, 0, STATE_STANDING)
