@@ -44,7 +44,6 @@ class Box():
         pygame.init()
         self.width = w
         self.height = h
-        self.bullets = pygame.sprite.Group()
         self.target = None
         self.font = pygame.font.SysFont('comicsansms', FONT_SIZE)
         self.font_intro = pygame.font.SysFont('comicsansms', 40)
@@ -123,7 +122,7 @@ class Box():
                 
                 if event.type == pygame.KEYDOWN: # aキーで攻撃
                     if event.key == pygame.K_a:
-                        self.bullets.add(Bullet(self.screen, self.player.x + PLAYER_WIDTH / 2, self.player.y + PLAYER_HEIGHT / 2 - 30, 5 * enemy_direction, -2))         
+                        self.player.shot(enemy_direction)
                     if event.key == pygame.K_s:
                         self.player.punch(enemy_direction)
 
@@ -139,10 +138,10 @@ class Box():
 
             if self.target.hp > 0:
                 # 肉球の衝突判定
-                collided = pygame.sprite.spritecollideany(self.target, self.bullets)
+                collided = pygame.sprite.spritecollideany(self.target, self.player.bullets)
                 if collided != None:
                     self.target.get_attacked('SHOT')
-                    self.bullets.remove(collided)
+                    self.player.bullets.remove(collided)
                 # 近接猫パンチとターゲットの衝突判定
                 if self.player.nikukyu != None and pygame.sprite.collide_rect(self.target, self.player.nikukyu):
                     self.target.get_attacked('PUNCH')
@@ -173,15 +172,14 @@ class Box():
             # print(self.player.y, BOX_HEIGHT - PLAYER_HEIGHT)
 
             # オブジェクトのアップデート
-            self.bullets.update()
             self.player.update()
             self.target.update()
             
             # 表示の更新
             self.show_score()
-            self.bullets.draw(self.screen)
             self.target.draw()
             self.player.draw()
+            self.player.bullets.draw(self.screen)
             pygame.display.flip() # パドルとボールの描画を画面に反映
             self.screen.blit(self.bg, self.rect_bg)     # 背景画像
             # self.screen.fill((0, 0, 0))  # 塗潰し：次の flip まで反映されない

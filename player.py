@@ -1,4 +1,5 @@
 import pygame
+from bullet import Bullet
 from constants import (
     PLAYER_WIDTH,
     PLAYER_HEIGHT,
@@ -43,6 +44,10 @@ class Player(pygame.sprite.Sprite):
         self.mp = PLAYER_MAX_MP
         self.image = pygame.image.load("img/cat_head.png")    # 画像を読み込む
 
+        # 肉球ショット
+        self.bullets = pygame.sprite.Group()
+
+        # 猫パンチ
         self.nikukyu_image = pygame.image.load("img/nikukyu.png")
         self.nikukyu = None
         self.punch_effect = pygame.image.load("img/cat_punch_effect.png")
@@ -105,6 +110,8 @@ class Player(pygame.sprite.Sprite):
             self.x += self.vx
             self.rect.move_ip(self.vx, self.vy)
 
+        self.bullets.update()
+
 
     def jump(self, vx, vy):
         self.status = STATE_JUMPING
@@ -117,6 +124,9 @@ class Player(pygame.sprite.Sprite):
 
     def left(self):
         self.vx = -PLAYER_VX
+
+    def shot(self, dir):
+        self.bullets.add(Bullet(self.screen, self.x + PLAYER_WIDTH / 2, self.y + PLAYER_HEIGHT / 2 - 30, 5 * dir, -2))
 
     def punch(self, dir):
         if self.punchMotionFrame > 0:
