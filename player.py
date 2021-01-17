@@ -111,7 +111,14 @@ class Player(pygame.sprite.Sprite):
             
             if self.punchMotionFrame <= 0:
                 self.punchMotionFrame = 0
-                self.status = STATE_STANDING
+                self.status = STATE_JUMPING if self.vy != 0 else STATE_STANDING
+
+            if self.y < BOX_HEIGHT - PLAYER_HEIGHT:
+                self.vy += G
+            else:
+                self.vy = 0
+            self.x += self.vx
+            self.y += self.vy
         elif self.status == STATE_STANDING:
             assert self.vy == 0
             if self.vx > 0:
@@ -193,8 +200,6 @@ class Player(pygame.sprite.Sprite):
             return
         
         self.punchDir = dir
-        self.vx = 0
-        self.vy = 0
         self.status = STATE_ATTACKING
         self.punchMotionFrame = PLAYER_PUNCH_MOTION_FRAME
         rect = self.nikukyu_image.get_rect()
