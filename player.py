@@ -184,7 +184,8 @@ class Player(pygame.sprite.Sprite):
         self.bullets.add(Bullet(self.screen, self.x + PLAYER_WIDTH / 2, self.y + PLAYER_HEIGHT / 2 - 30, 5 * dir, -2))
 
     def punch(self, dir):
-        if self.punchMotionFrame > 0:
+        if self.status == STATE_ATTACKING:
+            print("already punching")
             # すでに攻撃中だったらなにもしない
             return
         
