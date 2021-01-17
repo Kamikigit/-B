@@ -146,32 +146,17 @@ class Box():
                 if self.player.nikukyu != None and pygame.sprite.collide_rect(self.target, self.player.nikukyu):
                     self.target.get_attacked('PUNCH')
 
-                # 車の攻撃。距離が200以下だと突進
-                elif abs(self.player.x - (self.target.x + TARGET_WIDTH)/2) < 200 \
-                    and (self.target.status == STATE_STANDING or self.target.status == STATE_ATTACKING):
-                    """
-                    self.target.attack(self.player.x - self.target.x)
-                    # 車攻撃の衝突判定
-                    collided = pygame.sprite.collide_rect(self.target, self.player)
-                    if collided:
-                        self.player.hp -= 15
-                        self.target.attack_success()
-                        print("success")
-                    """
-                    pass
-
-
-
-                # print(self.target.status)
-                
-
 
             else:
+                # プレイヤーが勝った
                 self.player.win()
                 self.target.lose()
-            # print(self.player.y, BOX_HEIGHT - PLAYER_HEIGHT)
 
             # オブジェクトのアップデート
+            self.player.set_enemy(self.target)
+            self.target.set_player(self.player)
+
+            # お互いの情報を伝え合う
             self.player.update()
             self.target.update()
             

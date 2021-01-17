@@ -18,13 +18,24 @@ MAX_VY = -200
 PLAYER_ATTACK_KIND = {
     'SHOT': {
         'stop_time': 10,
-        'damage': 1
+        'damage': 1,
+        'knock_back': 2,
     },
     'PUNCH': {
         'stop_time': 20,
-        'damage': 10
+        'damage': 10,
+        'knock_back': 5,
     },
 }
+
+ENEMY_ATTACK_KIND = {
+    'BODY_BLOW': {
+        'stop_time': 10,
+        'damage': 3,
+        'knock_back': 10,
+    }
+}
+
 PLAYER_PUNCH_MOTION_FRAME = 10
 
 STATE_STANDING = 0      # 自機や適機の状態
