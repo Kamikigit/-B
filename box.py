@@ -1,10 +1,12 @@
 import math
 from time import sleep
+import random
 
 import pygame
 from player import Player
 from target import Target
 from bullet import Bullet
+from effect import Effect
 from utils import show_health_bar, show_magic_point
 from constants import (
     FONT_SIZE,
@@ -33,6 +35,7 @@ from constants import (
     STATE_ATTACKING,
     STATE_HIT,
     BOX_WIDTH,
+    BOX_HEIGHT,
     STAGE_INTRO,
     STAGE_TUTORIAL,
     STAGE_QUIT,
@@ -189,6 +192,18 @@ class Box():
                 self.screen.blit(self.star_guide_image, position)
                 self.deg = (self.deg + 3) % 360
                 if pressed_keys[pygame.K_z]:  # 百裂肉球
+                    for i in range(4):
+                        surface = pygame.image.load("img/explosion_small.png")
+                        rect = surface.get_rect()
+                        rect.center = (random.randrange(BOX_WIDTH), random.randrange(BOX_HEIGHT))
+                        effect = Effect(surface, rect, 100)
+                        self.player.effects.add(effect)
+
+                        surface = pygame.image.load("img/explosion_big.png")
+                        rect = surface.get_rect()
+                        rect.center = (random.randrange(BOX_WIDTH), random.randrange(BOX_HEIGHT))
+                        effect = Effect(surface, rect, 100)
+                        self.player.effects.add(effect)
                     self.stage = STAGE_CUTIN
 
             # 肉球の衝突判定
