@@ -39,6 +39,7 @@ from constants import (
     STAGE_RUN,
     STAGE_CLEAR,
     STAGE_OVER,
+    STAGE_CUTIN,
     FPS,
 )
 
@@ -57,6 +58,12 @@ class Box():
         self.rect_title = self.title.get_rect()
         self.tutorial = pygame.image.load("img/tutorial.png")
         self.rect_tutorial = self.tutorial.get_rect()
+        self.star_guide_image = pygame.image.load("img/fukidashi.png")
+        self.cutin_image = []           # 百裂肉球
+        for i in range(25):
+            cutin = pygame.image.load("img/cutin/frame_{:02}_delay-0.1s.gif".format(i))
+            self.cutin_image.append(cutin)
+        self.cutin_index = 0
         self.deg = 0
 
     def set(self):   # 初期設定を一括して行う
@@ -94,6 +101,8 @@ class Box():
                 self.show_clear_screen()
             elif self.stage == STAGE_OVER:
                 self.show_gameover_screen()
+            elif self.stage == STAGE_CUTIN:
+                self.show_cutin_screen()
 
 
     def intro_message(self):
@@ -172,6 +181,15 @@ class Box():
                 self.player.right()
             if pressed_keys[pygame.K_LEFT]:
                 self.player.left()
+            if self.player.mp == PLAYER_MAX_MP: # 百裂肉球を表示する
+                position = self.star_guide_image.get_rect()
+                position.center = (WIDTH/4*3+20, 40)
+                alpha = (math.cos(float(self.deg) / 180 * math.pi) + 1) * 255
+                self.star_guide_image.set_alpha(alpha)
+                self.screen.blit(self.star_guide_image, position)
+                self.deg = (self.deg + 3) % 360
+                if pressed_keys[pygame.K_z]:  # 百裂肉球
+                    self.stage = STAGE_CUTIN
 
             # 肉球の衝突判定
             collided = pygame.sprite.spritecollideany(self.target, self.player.bullets)
@@ -201,6 +219,20 @@ class Box():
             pygame.display.flip() # パドルとボールの描画を画面に反映
             self.screen.blit(self.bg, self.rect_bg)     # 背景画像
             # self.screen.fill((0, 0, 0))  # 塗潰し：次の flip まで反映されない
+
+    def show_cutin_screen(self):
+        repeat_num = 2
+        fps_scale = 3
+        self.clock.tick(FPS)
+        print(self.cutin_index)
+        self.screen.blit(self.cutin_image[(self.cutin_index % (25 * fps_scale)) // fps_scale], self.cutin_image[(self.cutin_index % (25 * fps_scale)) // fps_scale].get_rect())
+        self.cutin_index += 1
+        pygame.display.flip()
+
+        if self.cutin_index == 25 * fps_scale * repeat_num:
+            self.cutin_index = 0
+            self.stage = STAGE_RUN
+
 
     def show_clear_screen(self):
         self.clock.tick(FPS)
