@@ -89,6 +89,8 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         assert self.enemy != None
 
+        self.mp = min((self.mp + 0.01), PLAYER_MAX_MP)
+
         if self.status == STATE_JUMPING:
             self.prohibit_jump_frame = max(self.prohibit_jump_frame - 1, 0)
             self.vy += G    

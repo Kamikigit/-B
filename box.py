@@ -85,12 +85,12 @@ class Box():
         self.screen.blit(self.font.render("HP", True, WHITE), [BOX_WIDTH-40, 20])
         show_health_bar(self.screen, self.player.hp / h_scale, PLAYER_MAX_HP / h_scale, (BOX_WIDTH-150, 20))
         self.screen.blit(self.font.render("MP", True, WHITE), [BOX_WIDTH-40, 40])
-        show_magic_point(self.screen, self.player.mp, PLAYER_MAX_MP, (BOX_WIDTH - 130, 50))
+        show_magic_point(self.screen, int(self.player.mp), PLAYER_MAX_MP, (BOX_WIDTH - 130, 50))
 
         self.screen.blit(self.font.render("HP", True, WHITE), [20, 20])
         show_health_bar(self.screen, self.target.hp / h_scale, ENEMY_MAX_HP / h_scale, (50, 20))
         self.screen.blit(self.font.render("MP", True, WHITE), [20, 40])
-        show_magic_point(self.screen, self.target.mp, ENEMY_MAX_MP, (70, 50))
+        show_magic_point(self.screen, int(self.target.mp), ENEMY_MAX_MP, (70, 50))
 
     def run(self):
         while (self.stage != STAGE_QUIT):
@@ -192,6 +192,8 @@ class Box():
                 self.screen.blit(self.star_guide_image, position)
                 self.deg = (self.deg + 3) % 360
                 if pressed_keys[pygame.K_z]:  # 百裂肉球
+                    self.player.mp = 0
+                    self.target.hp -= 50
                     for i in range(4):
                         surface = pygame.image.load("img/explosion_small.png")
                         rect = surface.get_rect()
